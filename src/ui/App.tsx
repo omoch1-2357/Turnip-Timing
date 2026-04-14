@@ -103,7 +103,7 @@ export function App() {
           <div className="section-head">
             <div>
               <h2>入力</h2>
-              <p className="muted">空欄は未観測として扱います。価格は月曜午前から連続入力してください。</p>
+              <p className="muted">空欄は未観測として扱います。分かる枠だけ入力してください。</p>
             </div>
 
             <div className="button-row">

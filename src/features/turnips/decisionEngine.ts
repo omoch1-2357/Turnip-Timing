@@ -474,19 +474,7 @@ function validateInput(input: DecisionInput) {
     return "今週ここまでのカブ価を少なくとも 1 つ入力してください。";
   }
 
-  const lastObservedIndex = filledIndexes.at(-1) ?? -1;
-  for (let index = 0; index <= lastObservedIndex; index += 1) {
-    const value = input.observations[index];
-    if (value === null) {
-      return "価格入力は月曜午前から現在時点まで連続して入力してください。";
-    }
-
-    if (!Number.isInteger(value) || value < 1 || value > 660) {
-      return "各カブ価は 1〜660 ベルの整数で入力してください。";
-    }
-  }
-
-  for (let index = lastObservedIndex + 1; index < input.observations.length; index += 1) {
+  for (let index = 0; index < input.observations.length; index += 1) {
     const value = input.observations[index];
     if (value !== null && (!Number.isInteger(value) || value < 1 || value > 660)) {
       return "各カブ価は 1〜660 ベルの整数で入力してください。";

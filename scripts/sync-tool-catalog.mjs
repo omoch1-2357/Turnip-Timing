@@ -6,7 +6,8 @@ import { FieldValue, getFirestore } from "firebase-admin/firestore";
 const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
 
 if (!serviceAccountJson) {
-  throw new Error("FIREBASE_SERVICE_ACCOUNT_JSON が設定されていません。");
+  console.log("FIREBASE_SERVICE_ACCOUNT_JSON が未設定のため、catalog 同期をスキップしました。");
+  process.exit(0);
 }
 
 const configPath = resolve(process.cwd(), "tool.config.json");
