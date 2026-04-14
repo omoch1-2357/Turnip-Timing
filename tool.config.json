@@ -1,0 +1,12 @@
+{
+  "namespace": "omoch1-2357",
+  "id": "replace-this-tool-id",
+  "name": "Replace This Tool Name",
+  "description": "この説明文を置き換えてください。",
+  "owner": "replace-this-owner",
+  "repo": "replace-this-repo-name",
+  "tags": ["sample"],
+  "catalogMode": "publish",
+  "visible": true,
+  "sortOrder": 100
+}
