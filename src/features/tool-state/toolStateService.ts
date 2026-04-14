@@ -17,7 +17,25 @@ export async function fetchCloudState(user: User): Promise<ToolState> {
   const data = snapshot.data();
 
   return {
-    draft: typeof data?.draft === "string" ? data.draft : "",
+    buyPrice: typeof data?.buyPrice === "string" ? data.buyPrice : "",
+    previousPattern:
+      data?.previousPattern === "0" ||
+      data?.previousPattern === "1" ||
+      data?.previousPattern === "2" ||
+      data?.previousPattern === "3"
+        ? data.previousPattern
+        : "unknown",
+    riskProfile:
+      data?.riskProfile === "conservative" ||
+      data?.riskProfile === "neutral" ||
+      data?.riskProfile === "aggressive"
+        ? data.riskProfile
+        : "neutral",
+    observedPrices: Array.isArray(data?.observedPrices)
+      ? Array.from({ length: 12 }, (_, index) =>
+          typeof data.observedPrices[index] === "string" ? data.observedPrices[index] : "",
+        )
+      : Array.from({ length: 12 }, () => ""),
     draftUpdatedAt:
       typeof data?.draftUpdatedAt?.toDate === "function"
         ? data.draftUpdatedAt.toDate().toISOString()
@@ -29,7 +47,10 @@ export async function saveCloudState(user: User, state: ToolState) {
   await setDoc(
     getDocumentRef(user),
     {
-      draft: state.draft,
+      buyPrice: state.buyPrice,
+      previousPattern: state.previousPattern,
+      riskProfile: state.riskProfile,
+      observedPrices: state.observedPrices,
       draftUpdatedAt: serverTimestamp(),
     },
     { merge: true },

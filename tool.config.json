@@ -1,12 +1,12 @@
 {
   "namespace": "omoch1-2357",
-  "id": "replace-this-tool-id",
-  "name": "Replace This Tool Name",
-  "description": "この説明文を置き換えてください。",
-  "owner": "replace-this-owner",
-  "repo": "replace-this-repo-name",
-  "tags": ["sample"],
+  "id": "turnip-timing",
+  "name": "あつ森カブ売り時判定",
+  "description": "先週の型・日曜の購入価格・今週ここまでのカブ価から、今売るべきか待つべきかを判定します。",
+  "owner": "omoch1-2357",
+  "repo": "Turnip-Timing",
+  "tags": ["animal-crossing", "turnip", "decision"],
   "catalogMode": "publish",
   "visible": true,
-  "sortOrder": 100
+  "sortOrder": 140
 }

@@ -1,4 +1,9 @@
+import type { PreviousPatternInput, RiskProfile } from "../turnips/decisionEngine";
+
 export type ToolState = {
-  draft: string;
+  buyPrice: string;
+  previousPattern: PreviousPatternInput;
+  riskProfile: RiskProfile;
+  observedPrices: string[];
   draftUpdatedAt: string | null;
 };

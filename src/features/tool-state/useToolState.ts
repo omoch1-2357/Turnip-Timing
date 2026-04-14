@@ -9,7 +9,10 @@ type UseToolStateResult = {
   loading: boolean;
   saving: boolean;
   error: string | null;
-  setDraft: (value: string) => void;
+  setBuyPrice: (value: string) => void;
+  setPreviousPattern: (value: ToolState["previousPattern"]) => void;
+  setRiskProfile: (value: ToolState["riskProfile"]) => void;
+  setObservedPrice: (index: number, value: string) => void;
   save: () => Promise<void>;
   syncLocalToCloud: () => Promise<void>;
   hasLocalData: boolean;
@@ -18,7 +21,10 @@ type UseToolStateResult = {
 };
 
 const emptyState: ToolState = {
-  draft: "",
+  buyPrice: "",
+  previousPattern: "unknown",
+  riskProfile: "neutral",
+  observedPrices: Array.from({ length: 12 }, () => ""),
   draftUpdatedAt: null,
 };
 
@@ -70,21 +76,20 @@ export function useToolState(user: User | null, authEnabled: boolean): UseToolSt
     };
   }, [user]);
 
-  function setDraft(value: string) {
-    const nextState = {
-      ...state,
-      draft: value,
-    };
+  function updateState(updater: (current: ToolState) => ToolState) {
+    setState((current) => {
+      const nextState = updater(current);
 
-    setState(nextState);
-
-    if (!user) {
-      if (!saveLocalState(nextState)) {
-        setError("この環境ではローカル保存できませんでした。");
-      } else {
-        setLocalStateCache(nextState);
+      if (!user) {
+        if (!saveLocalState(nextState)) {
+          setError("この環境ではローカル保存できませんでした。");
+        } else {
+          setLocalStateCache(nextState);
+        }
       }
-    }
+
+      return nextState;
+    });
   }
 
   async function save() {
@@ -118,7 +123,11 @@ export function useToolState(user: User | null, authEnabled: boolean): UseToolSt
       return;
     }
 
-    if (!localStateCache.draft && !localStateCache.draftUpdatedAt) {
+    if (
+      !localStateCache.buyPrice &&
+      !localStateCache.observedPrices.some((value) => value.length > 0) &&
+      !localStateCache.draftUpdatedAt
+    ) {
       return;
     }
 
@@ -173,10 +182,37 @@ export function useToolState(user: User | null, authEnabled: boolean): UseToolSt
     loading,
     saving,
     error,
-    setDraft,
+    setBuyPrice(value) {
+      updateState((current) => ({
+        ...current,
+        buyPrice: value,
+      }));
+    },
+    setPreviousPattern(value) {
+      updateState((current) => ({
+        ...current,
+        previousPattern: value,
+      }));
+    },
+    setRiskProfile(value) {
+      updateState((current) => ({
+        ...current,
+        riskProfile: value,
+      }));
+    },
+    setObservedPrice(index, value) {
+      updateState((current) => ({
+        ...current,
+        observedPrices: current.observedPrices.map((price, priceIndex) => (priceIndex === index ? value : price)),
+      }));
+    },
     save,
     syncLocalToCloud,
-    hasLocalData: Boolean(localStateCache.draft || localStateCache.draftUpdatedAt),
+    hasLocalData: Boolean(
+      localStateCache.buyPrice ||
+        localStateCache.observedPrices.some((value) => value.length > 0) ||
+        localStateCache.draftUpdatedAt,
+    ),
     lastSavedLabel,
     reset,
   };

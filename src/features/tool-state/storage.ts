@@ -4,7 +4,10 @@ import type { ToolState } from "./types";
 const STORAGE_KEY = `tool-state:${currentTool.toolId}`;
 
 const emptyState: ToolState = {
-  draft: "",
+  buyPrice: "",
+  previousPattern: "unknown",
+  riskProfile: "neutral",
+  observedPrices: Array.from({ length: 12 }, () => ""),
   draftUpdatedAt: null,
 };
 
@@ -41,9 +44,30 @@ export function loadLocalState(): ToolState {
   }
 
   try {
-    const parsedValue = JSON.parse(rawValue) as ToolState & { updatedAt?: string | null };
+    const parsedValue = JSON.parse(rawValue) as Partial<ToolState> & {
+      draft?: string;
+      updatedAt?: string | null;
+    };
     return {
-      draft: typeof parsedValue.draft === "string" ? parsedValue.draft : "",
+      buyPrice: typeof parsedValue.buyPrice === "string" ? parsedValue.buyPrice : "",
+      previousPattern:
+        parsedValue.previousPattern === "0" ||
+        parsedValue.previousPattern === "1" ||
+        parsedValue.previousPattern === "2" ||
+        parsedValue.previousPattern === "3"
+          ? parsedValue.previousPattern
+          : "unknown",
+      riskProfile:
+        parsedValue.riskProfile === "conservative" ||
+        parsedValue.riskProfile === "neutral" ||
+        parsedValue.riskProfile === "aggressive"
+          ? parsedValue.riskProfile
+          : "neutral",
+      observedPrices: Array.isArray(parsedValue.observedPrices)
+        ? Array.from({ length: 12 }, (_, index) =>
+            typeof parsedValue.observedPrices?.[index] === "string" ? parsedValue.observedPrices[index] : "",
+          )
+        : Array.from({ length: 12 }, () => ""),
       draftUpdatedAt:
         typeof parsedValue.draftUpdatedAt === "string"
           ? parsedValue.draftUpdatedAt
